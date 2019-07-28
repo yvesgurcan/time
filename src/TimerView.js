@@ -159,33 +159,55 @@ export default class TimerView extends Component {
 
     render() {
         return (
-            <Fragment>
-                <Timer aboveThreshold={this.isAboveThreshold()}>
-                    {this.state.humanReadableTime}
-                </Timer>
-                {(this.state.started || this.state.paused) && (
+            <Root>
+                <Container>
+                    <Timer aboveThreshold={this.isAboveThreshold()}>
+                        {this.state.humanReadableTime}
+                    </Timer>
                     <StartTime>
-                        Started on{' '}
-                        {new Date(
-                            this.state.started || this.state.paused
-                        ).toLocaleString()}
-                        .
+                        {(this.state.started || this.state.paused) && (
+                            <Fragment>
+                                Started on{' '}
+                                {new Date(
+                                    this.state.started || this.state.paused
+                                ).toLocaleString()}
+                                .
+                            </Fragment>
+                        )}
                     </StartTime>
-                )}
-                <StartButton onClick={this.toggleTimerState}>
-                    {this.state.started ? 'Stop' : 'Start'}
-                </StartButton>
-                <ResetButton onClick={this.resetTimer}>Reset</ResetButton>
-            </Fragment>
+                    <StartButton onClick={this.toggleTimerState}>
+                        {this.state.started ? 'Stop' : 'Start'}
+                    </StartButton>
+                    <ResetButton onClick={this.resetTimer}>Reset</ResetButton>
+                </Container>
+            </Root>
         );
     }
 }
+
+const Root = styled.div`
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const Container = styled.div`
+    min-width: 200px;
+    background: #ebf1f2;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #909fa5;
+    cursor: pointer;
+`;
 
 const Timer = styled.div`
     color: ${props => (props.aboveThreshold ? 'red' : null)};
 `;
 
 const StartTime = styled.div`
+    min-height: 20px;
     font-size: 12px;
     color: ${props => (props.aboveThreshold ? 'red' : 'grey')};
     margin-bottom: 10px;
