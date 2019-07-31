@@ -12,12 +12,11 @@ import {
 } from './util';
 
 const ONE_SECOND = 1000;
-
 const TWO_HOURS = 2 * 1000 * 60 * 60;
-
 const TEN_MINUTES = 10 * 1000 * 60;
 
-// const ALMOST_TWO_HOURS = 2.2 * 1000 * 60 * 60;
+const CURRENT_TIMER = 'current';
+const HISTORY_TIMERS = 'history';
 
 let timerInterval = null;
 
@@ -25,14 +24,11 @@ export default class TimerView extends Component {
     state = {};
 
     async componentDidMount() {
-        const previousTimer = await getLocalStorage();
+        const previousTimer = await getLocalStorage(CURRENT_TIMER);
         if (previousTimer) {
             this.startWithPreviousTimer(previousTimer);
         } else {
             this.startTimer();
-
-            // dev
-            // this.startTimer(new Date().getTime() - ALMOST_TWO_HOURS);
         }
 
         registerServiceWorker('./serviceWorker.js');
@@ -94,21 +90,27 @@ export default class TimerView extends Component {
 
     pauseTimer = () => {
         timerInterval = destroyInterval(timerInterval);
-        setLocalStorage({
-            started: false,
-            milliseconds: this.state.milliseconds,
-            paused: this.state.started
-        });
+        setLocalStorage(
+            {
+                started: false,
+                milliseconds: this.state.milliseconds,
+                paused: this.state.started
+            },
+            CURRENT_TIMER
+        );
         this.setState({ started: false, paused: this.state.started });
     };
 
     resetTimer = () => {
         timerInterval = destroyInterval(timerInterval);
-        setLocalStorage({
-            started: false,
-            milliseconds: 0,
-            paused: false
-        });
+        setLocalStorage(
+            {
+                started: false,
+                milliseconds: 0,
+                paused: false
+            },
+            CURRENT_TIMER
+        );
 
         const humanReadableTime = getReadableTime();
         this.setState({
@@ -123,13 +125,26 @@ export default class TimerView extends Component {
         // setLocalStorage(null);
     };
 
+    saveTimer = () => {
+        patchLocalStorage(
+            {
+                started: this.state.paused,
+                milliseconds: this.state.milliseconds
+            },
+            HISTORY_TIMERS,
+            true
+        );
+
+        if (window.opener) {
+            window.opener.location.reload(false);
+        }
+    };
+
     toggleTimerState = () => {
         if (this.state.started) {
             this.pauseTimer();
         } else {
             this.startTimer();
-            // dev
-            // this.startTimer(new Date().getTime() - ALMOST_TWO_HOURS);
         }
     };
 
@@ -175,10 +190,13 @@ export default class TimerView extends Component {
                             </Fragment>
                         )}
                     </StartTime>
-                    <StartButton onClick={this.toggleTimerState}>
+                    <Button onClick={this.toggleTimerState}>
                         {this.state.started ? 'Stop' : 'Start'}
-                    </StartButton>
-                    <ResetButton onClick={this.resetTimer}>Reset</ResetButton>
+                    </Button>
+                    <Button onClick={this.resetTimer}>Reset</Button>
+                    {!this.state.started && this.state.milliseconds > 0 && (
+                        <Button onClick={this.saveTimer}>Save</Button>
+                    )}
                 </Container>
             </Root>
         );
@@ -213,6 +231,4 @@ const StartTime = styled.div`
     margin-bottom: 10px;
 `;
 
-const StartButton = styled.button``;
-
-const ResetButton = styled.button``;
+const Button = styled.button``;

@@ -28,7 +28,7 @@ ReactDOM.render(
         <Root>
             <GlobalStyle />
             <Switch>
-                <Route path="/timer" component={TimerView} />
+                <Route path="/chronometer" component={TimerView} />
                 <Route path="/" component={HomeView} />
             </Switch>
         </Root>

@@ -1,3 +1,5 @@
+import uuid4 from 'uuid/v4';
+
 const APP_KEY = 'yog-timer';
 
 const GRANTED = 'granted';
@@ -38,17 +40,17 @@ export const getuserFriendlyTime = (milliseconds, fudge, roundUpMinutes) => {
         return `${minutes}${fudge} min`;
     }
 
-    return `${hours} h ${minutes} min`;
+    return `${hours} h ${getPaddedTime(minutes)} min`;
 };
 
 export const getPaddedTime = time => {
     return ('00' + time).slice(-2);
 };
 
-export const getLocalStorage = async () => {
+export const getLocalStorage = async key => {
     let result = {};
     try {
-        let stringifiedResult = localStorage.getItem(APP_KEY);
+        let stringifiedResult = localStorage.getItem(`${APP_KEY}-${key}`);
         result = await JSON.parse(stringifiedResult);
     } catch (exception) {
         console.error({ exception });
@@ -56,13 +58,34 @@ export const getLocalStorage = async () => {
     return result;
 };
 
-export const setLocalStorage = payload => {
-    localStorage.setItem(APP_KEY, JSON.stringify(payload));
+export const setLocalStorage = (payload, key) => {
+    localStorage.setItem(`${APP_KEY}-${key}`, JSON.stringify(payload));
 };
 
-export const patchLocalStorage = async payload => {
-    const previous = await getLocalStorage();
-    localStorage.setItem(APP_KEY, JSON.stringify({ ...previous, ...payload }));
+export const patchLocalStorage = async (payload, key, array = false) => {
+    const previous = await getLocalStorage(key);
+    if (array) {
+        const id = uuid4();
+        localStorage.setItem(
+            `${APP_KEY}-${key}`,
+            JSON.stringify([{ ...payload, id }, ...(previous || [])])
+        );
+    } else {
+        localStorage.setItem(
+            `${APP_KEY}-${key}`,
+            JSON.stringify({ ...previous, ...payload })
+        );
+    }
+};
+
+export const deleteLocalStorage = async (index, key) => {
+    const previous = await getLocalStorage(key);
+    const newArray = [
+        ...previous.slice(0, index),
+        ...previous.slice(index + 1)
+    ];
+    localStorage.setItem(`${APP_KEY}-${key}`, JSON.stringify([...newArray]));
+    return newArray;
 };
 
 export const destroyInterval = interval => {
