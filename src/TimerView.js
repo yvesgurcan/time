@@ -76,11 +76,14 @@ export default class TimerView extends Component {
             humanReadableTime
         }));
 
-        patchLocalStorage({
-            started: this.state.started,
-            ...(started && { started }),
-            milliseconds
-        });
+        patchLocalStorage(
+            {
+                started: this.state.started,
+                ...(started && { started }),
+                milliseconds
+            },
+            CURRENT_TIMER
+        );
         this.updateWindowTitle(humanReadableTime);
     };
 
@@ -120,9 +123,6 @@ export default class TimerView extends Component {
             paused: false
         });
         this.updateWindowTitle(humanReadableTime);
-
-        // dev
-        // setLocalStorage(null);
     };
 
     saveTimer = () => {
@@ -138,6 +138,15 @@ export default class TimerView extends Component {
         if (window.opener) {
             window.opener.location.reload(false);
         }
+    };
+
+    addTime = delta => {
+        const now = new Date().getTime();
+        const updatedStart = Math.min(
+            now,
+            new Date(this.state.started - delta).getTime()
+        );
+        this.setState({ started: updatedStart }, () => this.updateTimer());
     };
 
     toggleTimerState = () => {
@@ -190,12 +199,24 @@ export default class TimerView extends Component {
                             </Fragment>
                         )}
                     </StartTime>
-                    <Button onClick={this.toggleTimerState}>
-                        {this.state.started ? 'Stop' : 'Start'}
-                    </Button>
-                    <Button onClick={this.resetTimer}>Reset</Button>
-                    {!this.state.started && this.state.milliseconds > 0 && (
-                        <Button onClick={this.saveTimer}>Save</Button>
+                    <div>
+                        <Button onClick={this.toggleTimerState}>
+                            {this.state.started ? 'Stop' : 'Start'}
+                        </Button>
+                        <Button onClick={this.resetTimer}>Reset</Button>
+                        {!this.state.started && this.state.milliseconds > 0 && (
+                            <Button onClick={this.saveTimer}>Save</Button>
+                        )}
+                    </div>
+                    {this.state.started && (
+                        <div>
+                            <Button onClick={() => this.addTime(TEN_MINUTES)}>
+                                +10 min
+                            </Button>
+                            <Button onClick={() => this.addTime(-TEN_MINUTES)}>
+                                -10 min
+                            </Button>
+                        </div>
                     )}
                 </Container>
             </Root>

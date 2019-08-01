@@ -1,6 +1,6 @@
 import uuid4 from 'uuid/v4';
 
-const APP_KEY = 'yog-timer';
+const APP_KEY = 'yog-chronos';
 
 const GRANTED = 'granted';
 
