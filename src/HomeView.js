@@ -4,8 +4,6 @@ import { getReadableTime, getLocalStorage, deleteLocalStorage } from './util';
 
 const HISTORY_TIMERS = 'history';
 
-let popup = null;
-
 export default class HomeView extends Component {
     state = { history: [] };
 
@@ -30,15 +28,10 @@ export default class HomeView extends Component {
     };
 
     handleNewTimer = () => {
-        popup = open(
-            '#/chronometer',
-            null,
-            'statusbar=no,height=160,width=260'
-        );
+        open('#/chronometer', null, 'statusbar=no,height=210,width=260');
     };
 
     render() {
-        console.log(popup);
         return (
             <Root>
                 <Button onClick={this.handleNewTimer}>Chronometer</Button>

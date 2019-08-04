@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import {
     getReadableTime,
     getLocalStorage,
@@ -8,22 +9,34 @@ import {
     destroyInterval,
     registerServiceWorker,
     requestNotificationPermission,
-    timeNotification
+    timeNotification,
+    getHours,
+    getMinutes,
+    getMinutesOnly,
+    getPaddedTime
 } from './util';
+
+import CogIcon from './CogIcon';
 
 const ONE_SECOND = 1000;
 const TWO_HOURS = 2 * 1000 * 60 * 60;
-const TEN_MINUTES = 10 * 1000 * 60;
+const TEN_MINUTES = 10 * 1000 * 60 + 10;
 
+const CONFIGURATION = 'config';
 const CURRENT_TIMER = 'current';
 const HISTORY_TIMERS = 'history';
 
 let timerInterval = null;
 
 export default class TimerView extends Component {
-    state = {};
+    state = {
+        showSettings: false
+    };
 
     async componentDidMount() {
+        const config = await this.getConfig();
+        this.setState({ ...config });
+
         const previousTimer = await getLocalStorage(CURRENT_TIMER);
         if (previousTimer) {
             this.startWithPreviousTimer(previousTimer);
@@ -34,6 +47,15 @@ export default class TimerView extends Component {
         registerServiceWorker('./serviceWorker.js');
         await requestNotificationPermission();
     }
+
+    getConfig = async () => {
+        return (
+            (await getLocalStorage(CONFIGURATION)) || {
+                threshold: TWO_HOURS,
+                interval: TEN_MINUTES
+            }
+        );
+    };
 
     startWithPreviousTimer = async previousTimer => {
         if (previousTimer.started) {
@@ -218,27 +240,70 @@ export default class TimerView extends Component {
                             </Button>
                         </div>
                     )}
+                    {this.state.showSettings && (
+                        <Fragment>
+                            <hr />
+                            <Setting first>
+                                <div>Send notifications after </div>
+                                <TimeInput
+                                    type="number"
+                                    value={getHours(this.state.threshold)}
+                                />{' '}
+                                hours{' '}
+                                <TimeInput
+                                    type="number"
+                                    value={getPaddedTime(
+                                        getMinutes(this.state.threshold)
+                                    )}
+                                />{' '}
+                                minutes.
+                            </Setting>
+                            <Setting>
+                                <div>Send a notification every </div>
+                                <TimeInput
+                                    type="number"
+                                    value={getMinutesOnly(this.state.interval)}
+                                />{' '}
+                                minutes.
+                            </Setting>
+                        </Fragment>
+                    )}
                 </Container>
+                <Extra>
+                    <SettingToggle
+                        onClick={() =>
+                            this.setState({
+                                showSettings: !this.state.showSettings
+                            })
+                        }
+                    >
+                        <CogIcon />
+                    </SettingToggle>
+                    <Link to="/" target="_blank">
+                        Dashboard >
+                    </Link>
+                </Extra>
             </Root>
         );
     }
 }
 
 const Root = styled.div`
-    width: 100vw;
-    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 `;
 
 const Container = styled.div`
-    min-width: 200px;
+    margin-top: 10px;
+    width: 200px;
     background: #ebf1f2;
     padding: 20px;
     border-radius: 10px;
     border: 1px solid #909fa5;
-    cursor: pointer;
 `;
 
 const Timer = styled.div`
@@ -252,4 +317,31 @@ const StartTime = styled.div`
     margin-bottom: 10px;
 `;
 
-const Button = styled.button``;
+const Button = styled.button`
+    cursor: pointer;
+`;
+
+const Setting = styled.div`
+    ${props => (props.first ? null : 'margin-top: 15px;')}
+    font-size: 14px;
+`;
+
+const TimeInput = styled.input`
+    width: 35px;
+`;
+
+const Extra = styled.div`
+    width: 240px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+`;
+
+const SettingToggle = styled.div`
+    height: 15px;
+    width: 15px;
+    cursor: pointer;
+`;

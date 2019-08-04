@@ -47,6 +47,18 @@ export const getPaddedTime = time => {
     return ('00' + time).slice(-2);
 };
 
+export const getHours = milliseconds => {
+    return Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
+};
+
+export const getMinutes = milliseconds => {
+    return getMinutesOnly(milliseconds) % 60;
+};
+
+export const getMinutesOnly = milliseconds => {
+    return Math.floor(milliseconds / (1000 * 60));
+};
+
 export const getLocalStorage = async key => {
     let result = {};
     try {

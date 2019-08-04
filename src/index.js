@@ -11,6 +11,14 @@ const GlobalStyle = createGlobalStyle`
     body {
         margin: 0;
     }
+
+    a {
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 `;
 
 export const Root = styled.div`
