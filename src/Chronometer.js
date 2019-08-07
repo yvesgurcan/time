@@ -28,7 +28,7 @@ const HISTORY_TIMERS = 'history';
 
 let timerInterval = null;
 
-export default class TimerView extends Component {
+export default class Chronometer extends Component {
     state = {
         showSettings: false
     };
@@ -204,8 +204,9 @@ export default class TimerView extends Component {
     };
 
     render() {
+        const { popup = true } = this.props;
         return (
-            <Root>
+            <Fragment>
                 <Container>
                     <Timer aboveThreshold={this.isAboveThreshold()}>
                         {this.state.humanReadableTime}
@@ -279,23 +280,16 @@ export default class TimerView extends Component {
                     >
                         <CogIcon />
                     </SettingToggle>
-                    <Link to="/" target="_blank">
-                        Dashboard >
-                    </Link>
+                    {popup && (
+                        <Link to="/" target="_blank">
+                            Dashboard >
+                        </Link>
+                    )}
                 </Extra>
-            </Root>
+            </Fragment>
         );
     }
 }
-
-const Root = styled.div`
-    min-width: 100vw;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-`;
 
 const Container = styled.div`
     margin-top: 10px;

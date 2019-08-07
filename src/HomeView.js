@@ -1,5 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
+import Chronometer from './Chronometer';
 import { getReadableTime, getLocalStorage, deleteLocalStorage } from './util';
 
 const HISTORY_TIMERS = 'history';
@@ -34,23 +35,30 @@ export default class HomeView extends Component {
     render() {
         return (
             <Root>
-                <Button onClick={this.handleNewTimer}>Chronometer</Button>
-                <Heading1>Previous Times</Heading1>
-                {this.state.history.length === 0
-                    ? 'None.'
-                    : this.state.history.map((timer, index) => (
-                          <Timer key={timer.id}>
-                              <TimeDisplay>
-                                  <div>{timer.humanFriendlyFormat}</div>
-                                  <StartTime>on {timer.started}</StartTime>
-                              </TimeDisplay>
-                              <DeleteTimer
-                                  onClick={() => this.deleTimer(index)}
-                              >
-                                  <Button>Delete</Button>
-                              </DeleteTimer>
-                          </Timer>
-                      ))}
+                <Section>
+                    <Chronometer popup={false} />
+                    <Button onClick={this.handleNewTimer}>
+                        Open in separate window
+                    </Button>
+                </Section>
+                <Section>
+                    <Heading1>Previous Times</Heading1>
+                    {this.state.history.length === 0
+                        ? 'None.'
+                        : this.state.history.map((timer, index) => (
+                              <Timer key={timer.id}>
+                                  <TimeDisplay>
+                                      <div>{timer.humanFriendlyFormat}</div>
+                                      <StartTime>on {timer.started}</StartTime>
+                                  </TimeDisplay>
+                                  <DeleteTimer
+                                      onClick={() => this.deleTimer(index)}
+                                  >
+                                      <Button>Delete</Button>
+                                  </DeleteTimer>
+                              </Timer>
+                          ))}
+                </Section>
             </Root>
         );
     }
@@ -59,6 +67,12 @@ export default class HomeView extends Component {
 const Root = styled.div`
     font-size: 20px;
     padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+`;
+
+const Section = styled.div`
+    margin: 10px;
 `;
 
 const Heading1 = styled.h1`

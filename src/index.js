@@ -5,7 +5,7 @@ import { HashRouter, Route } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import HomeView from './HomeView';
-import TimerView from './TimerView';
+import ChronometerView from './ChronometerView';
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -36,7 +36,7 @@ ReactDOM.render(
         <Root>
             <GlobalStyle />
             <Switch>
-                <Route path="/chronometer" component={TimerView} />
+                <Route path="/chronometer" component={ChronometerView} />
                 <Route path="/" component={HomeView} />
             </Switch>
         </Root>
