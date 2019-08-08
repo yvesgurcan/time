@@ -19,8 +19,10 @@ import {
 import CogIcon from './CogIcon';
 
 const ONE_SECOND = 1000;
-const TWO_HOURS = 2 * 1000 * 60 * 60;
-const TEN_MINUTES = 10 * 1000 * 60 + 10;
+const ONE_MINUTE = ONE_SECOND * 60;
+const TWO_HOURS = 2 * ONE_MINUTE * 60;
+const TEN_MINUTES = 10 * ONE_MINUTE + 10;
+const NINETY_NINE_MINUTES = 99 * ONE_MINUTE;
 
 const CONFIGURATION = 'config';
 const CURRENT_TIMER = 'current';
@@ -203,6 +205,18 @@ export default class Chronometer extends Component {
         return this.state.milliseconds >= TWO_HOURS;
     };
 
+    updateNotificationInterval = async minutes => {
+        const interval = Math.max(
+            0,
+            Math.min(minutes * 60 * 1000, NINETY_NINE_MINUTES)
+        );
+        this.setState({ interval });
+        const configuration = await getLocalStorage(CONFIGURATION);
+        setLocalStorage({ ...configuration, interval }, CONFIGURATION);
+    };
+
+    // onBlur
+
     render() {
         const { popup = true } = this.props;
         return (
@@ -264,6 +278,11 @@ export default class Chronometer extends Component {
                                 <TimeInput
                                     type="number"
                                     value={getMinutesOnly(this.state.interval)}
+                                    onChange={event =>
+                                        this.updateNotificationInterval(
+                                            event.target.value
+                                        )
+                                    }
                                 />{' '}
                                 minutes.
                             </Setting>
