@@ -14,9 +14,12 @@ import {
     getMinutes,
     getMinutesOnly,
     getPaddedTime
-} from './util';
+} from '../util';
 
 import CogIcon from './CogIcon';
+
+const RED = 'rgb(200, 0, 0)';
+const DARK_GREY = 'rgb(80, 80, 80)';
 
 const ONE_SECOND = 1000;
 const ONE_MINUTE = ONE_SECOND * 60;
@@ -47,7 +50,6 @@ export default class Chronometer extends Component {
         }
 
         registerServiceWorker('./serviceWorker.js');
-        await requestNotificationPermission();
     }
 
     getConfig = async () => {
@@ -86,7 +88,7 @@ export default class Chronometer extends Component {
         this.handleSendAlert();
     };
 
-    updateTimerWithFixedValue = (
+    updateTimerWithFixedValue = async (
         started = false,
         value = 0,
         paused = false
@@ -149,8 +151,8 @@ export default class Chronometer extends Component {
         this.updateWindowTitle(humanReadableTime);
     };
 
-    saveTimer = () => {
-        patchLocalStorage(
+    saveTimer = async () => {
+        await patchLocalStorage(
             {
                 started: this.state.paused,
                 milliseconds: this.state.milliseconds
@@ -161,6 +163,10 @@ export default class Chronometer extends Component {
 
         if (window.opener) {
             window.opener.location.reload(false);
+        }
+
+        if (this.props.handleSaveTimer) {
+            this.props.handleSaveTimer();
         }
     };
 
@@ -173,10 +179,11 @@ export default class Chronometer extends Component {
         this.setState({ started: updatedStart }, () => this.updateTimer());
     };
 
-    toggleTimerState = () => {
+    toggleTimerState = async () => {
         if (this.state.started) {
             this.pauseTimer();
         } else {
+            await requestNotificationPermission();
             this.startTimer();
         }
     };
@@ -214,8 +221,6 @@ export default class Chronometer extends Component {
         const configuration = await getLocalStorage(CONFIGURATION);
         setLocalStorage({ ...configuration, interval }, CONFIGURATION);
     };
-
-    // onBlur
 
     render() {
         const { popup = true } = this.props;
@@ -320,13 +325,13 @@ const Container = styled.div`
 `;
 
 const Timer = styled.div`
-    color: ${props => (props.aboveThreshold ? 'red' : null)};
+    color: ${props => (props.aboveThreshold ? RED : DARK_GREY)};
 `;
 
 const StartTime = styled.div`
     min-height: 20px;
     font-size: 12px;
-    color: ${props => (props.aboveThreshold ? 'red' : 'grey')};
+    color: ${props => (props.aboveThreshold ? RED : DARK_GREY)};
     margin-bottom: 10px;
 `;
 
@@ -335,6 +340,7 @@ const Button = styled.button`
 `;
 
 const Setting = styled.div`
+    color: ${DARK_GREY};
     ${props => (props.first ? null : 'margin-top: 15px;')}
     font-size: 14px;
 `;

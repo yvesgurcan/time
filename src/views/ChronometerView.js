@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import Chronometer from './Chronometer';
+import Chronometer from '../components/Chronometer';
 
 export default class ChronometerView extends Component {
     render() {
