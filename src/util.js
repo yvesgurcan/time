@@ -6,6 +6,28 @@ const GRANTED = 'granted';
 
 const FIVE_MINUTES = 5 * 1000 * 60;
 
+// 37 characters maximum per message
+const MESSAGES = [
+    "Let's get up and stretch. 🙂",
+    'Feeling hungry? Eat a bite. 🥗',
+    'Send a message to somebody. 📱',
+    'When did you last drink water? 🚰',
+    'Time for a bike ride! 🚴‍♂️',
+    'Too much time looking at a screen! 🤓',
+    'What else could you be doing today? 🔌',
+    'Give your brain a break. 💭',
+    'Is this making you feel anxious? 😰',
+    'Be nice to yourself. 🌻',
+    'How about something different? 🏡',
+    'Spend a few minutes on a chore. 🥄',
+    "There's always tomorrow. ☀️",
+    "What's going on outside? 🚊",
+    'Did you plan something else today? 🎭',
+    'Can this wait 10 minutes? ⏳',
+    'Time for a nap! 💤',
+    "That's enough! ✨"
+];
+
 let serviceWorkerRegistration = null;
 
 export const getReadableTime = (milliseconds = 0) => {
@@ -78,12 +100,12 @@ export const patchLocalStorage = async (payload, key, array = false) => {
     const previous = await getLocalStorage(key);
     if (array) {
         const id = uuid4();
-        localStorage.setItem(
+        await localStorage.setItem(
             `${APP_KEY}-${key}`,
             JSON.stringify([{ ...payload, id }, ...(previous || [])])
         );
     } else {
-        localStorage.setItem(
+        await localStorage.setItem(
             `${APP_KEY}-${key}`,
             JSON.stringify({ ...previous, ...payload })
         );
@@ -142,21 +164,22 @@ export const displayNotification = notification => {
 };
 
 export const timeNotification = (threshold, offset) => {
-    const title = `${getuserFriendlyTime(threshold, '+')} of work. ${
-        offset < FIVE_MINUTES ? 'Take a break! 🥳' : 'Time to take a break!'
-    }`;
+    const title = getuserFriendlyTime(threshold + offset, '+', true);
 
-    let body = '';
-    if (offset >= FIVE_MINUTES * 2) {
-        body = `Your pause is ${getuserFriendlyTime(
-            offset,
-            '',
-            true
-        )} overdue 😟`;
-    }
+    const message = getRandomMessage();
+    const body = `${
+        offset < FIVE_MINUTES ? 'Time to take a break! 🎉' : message
+    }`;
 
     return displayNotification({
         title,
         options: { body, requireInteraction: true }
     });
+};
+
+const getRandomMessage = () => {
+    const min = Math.ceil(0);
+    const max = Math.floor(MESSAGES.length);
+    const index = Math.floor(Math.random() * (max - min)) + min;
+    return MESSAGES[index];
 };
