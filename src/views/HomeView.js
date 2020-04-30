@@ -86,11 +86,12 @@ export default class HomeView extends Component {
         let timerComponents = [];
         Object.keys(this.state.history).forEach((day, index) => {
             const timers = this.state.history[day];
-            timerComponents.push(
+            let dayComponent = [];
+            dayComponent.push(
                 <Heading2>{new Date(day).toLocaleDateString()}</Heading2>
             );
             timers.forEach(timer => {
-                timerComponents.push(
+                dayComponent.push(
                     <Timer key={timer.id}>
                         <TimeDisplay>
                             <div>{timer.humanFriendlyFormat}</div>
@@ -105,6 +106,7 @@ export default class HomeView extends Component {
                     </Timer>
                 );
             });
+            timerComponents.push(<div key={day}>{dayComponent}</div>)
         });
 
         return timerComponents;
@@ -124,7 +126,7 @@ export default class HomeView extends Component {
                 </Section>
                 <Section>
                     <Heading1>Previous Times</Heading1>
-                    {this.renderParsedTimes()}
+                    <History>{this.renderParsedTimes()}</History>
                 </Section>
             </Root>
         );
@@ -169,4 +171,9 @@ const DeleteTimer = styled.div``;
 const Button = styled.button`
     margin: 10px;
     margin-left: 0;
+`;
+
+const History = styled.div`
+    display: flex;
+    flex-wrap: wrap;
 `;
