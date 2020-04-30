@@ -88,7 +88,9 @@ export default class HomeView extends Component {
             const timers = this.state.history[day];
             let dayComponent = [];
             dayComponent.push(
-                <Heading2>{new Date(day).toLocaleDateString()}</Heading2>
+                <Heading2 key={day}>
+                    {new Date(day).toLocaleDateString()}
+                </Heading2>
             );
             timers.forEach(timer => {
                 dayComponent.push(
@@ -106,7 +108,9 @@ export default class HomeView extends Component {
                     </Timer>
                 );
             });
-            timerComponents.push(<div key={day}>{dayComponent}</div>)
+            timerComponents.push(
+                <DayTimers key={day}>{dayComponent}</DayTimers>
+            );
         });
 
         return timerComponents;
@@ -120,14 +124,10 @@ export default class HomeView extends Component {
                         popup={false}
                         handleSaveTimer={this.handleSaveTimer}
                     />
-                    <Button onClick={this.handleNewTimer}>
-                        Open in separate window
-                    </Button>
                 </Section>
-                <Section>
-                    <Heading1>Previous Times</Heading1>
+                <SectionTimers>
                     <History>{this.renderParsedTimes()}</History>
-                </Section>
+                </SectionTimers>
             </Root>
         );
     }
@@ -142,10 +142,12 @@ const Root = styled.div`
 
 const Section = styled.div`
     margin: 10px;
+    flex: 1;
+    width: 100%;
 `;
 
-const Heading1 = styled.h1`
-    margin: 0;
+const SectionTimers = styled(Section)`
+    flex: 20;
 `;
 
 const Heading2 = styled.h2`
@@ -155,6 +157,7 @@ const Heading2 = styled.h2`
 
 const Timer = styled.div`
     padding: 5px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
 `;
@@ -176,4 +179,12 @@ const Button = styled.button`
 const History = styled.div`
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+`;
+
+const DayTimers = styled.div`
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    padding-bottom: 2rem;
+    min-width: 180px;
 `;

@@ -225,101 +225,117 @@ export default class Chronometer extends Component {
     render() {
         const { popup = true } = this.props;
         return (
-            <Fragment>
-                <Container>
-                    <Timer aboveThreshold={this.isAboveThreshold()}>
-                        {this.state.humanReadableTime}
-                    </Timer>
-                    <StartTime>
-                        {(this.state.started || this.state.paused) && (
+            <Root>
+                <div>
+                    <Container>
+                        <Timer aboveThreshold={this.isAboveThreshold()}>
+                            {this.state.humanReadableTime}
+                        </Timer>
+                        <StartTime>
+                            {(this.state.started || this.state.paused) && (
+                                <Fragment>
+                                    Started on{' '}
+                                    {new Date(
+                                        this.state.started || this.state.paused
+                                    ).toLocaleString()}
+                                    .
+                                </Fragment>
+                            )}
+                        </StartTime>
+                        <div>
+                            <Button onClick={this.toggleTimerState}>
+                                {this.state.started ? 'Stop' : 'Start'}
+                            </Button>
+                            <Button onClick={this.resetTimer}>Reset</Button>
+                            {!this.state.started &&
+                                this.state.milliseconds > 0 && (
+                                    <Button onClick={this.saveTimer}>
+                                        Save
+                                    </Button>
+                                )}
+                        </div>
+                        {this.state.started && (
+                            <div>
+                                <Button
+                                    onClick={() => this.addTime(TEN_MINUTES)}
+                                >
+                                    +10 min
+                                </Button>
+                                <Button
+                                    onClick={() => this.addTime(-TEN_MINUTES)}
+                                >
+                                    -10 min
+                                </Button>
+                            </div>
+                        )}
+                        {this.state.showSettings && (
                             <Fragment>
-                                Started on{' '}
-                                {new Date(
-                                    this.state.started || this.state.paused
-                                ).toLocaleString()}
-                                .
+                                <hr />
+                                <Setting first>
+                                    <div>Send notifications after </div>
+                                    <TimeInput
+                                        type="number"
+                                        value={getHours(this.state.threshold)}
+                                    />{' '}
+                                    hours{' '}
+                                    <TimeInput
+                                        type="number"
+                                        value={getPaddedTime(
+                                            getMinutes(this.state.threshold)
+                                        )}
+                                    />{' '}
+                                    minutes.
+                                </Setting>
+                                <Setting>
+                                    <div>Send a notification every </div>
+                                    <TimeInput
+                                        type="number"
+                                        value={getMinutesOnly(
+                                            this.state.interval
+                                        )}
+                                        onChange={event =>
+                                            this.updateNotificationInterval(
+                                                event.target.value
+                                            )
+                                        }
+                                    />{' '}
+                                    minutes.
+                                </Setting>
                             </Fragment>
                         )}
-                    </StartTime>
-                    <div>
-                        <Button onClick={this.toggleTimerState}>
-                            {this.state.started ? 'Stop' : 'Start'}
-                        </Button>
-                        <Button onClick={this.resetTimer}>Reset</Button>
-                        {!this.state.started && this.state.milliseconds > 0 && (
-                            <Button onClick={this.saveTimer}>Save</Button>
+                    </Container>
+                    <Extra>
+                        <SettingToggle
+                            onClick={() =>
+                                this.setState({
+                                    showSettings: !this.state.showSettings
+                                })
+                            }
+                        >
+                            <CogIcon />
+                        </SettingToggle>
+                        {popup && (
+                            <Link to="/" target="_blank">
+                                Dashboard >
+                            </Link>
                         )}
-                    </div>
-                    {this.state.started && (
-                        <div>
-                            <Button onClick={() => this.addTime(TEN_MINUTES)}>
-                                +10 min
-                            </Button>
-                            <Button onClick={() => this.addTime(-TEN_MINUTES)}>
-                                -10 min
-                            </Button>
-                        </div>
-                    )}
-                    {this.state.showSettings && (
-                        <Fragment>
-                            <hr />
-                            <Setting first>
-                                <div>Send notifications after </div>
-                                <TimeInput
-                                    type="number"
-                                    value={getHours(this.state.threshold)}
-                                />{' '}
-                                hours{' '}
-                                <TimeInput
-                                    type="number"
-                                    value={getPaddedTime(
-                                        getMinutes(this.state.threshold)
-                                    )}
-                                />{' '}
-                                minutes.
-                            </Setting>
-                            <Setting>
-                                <div>Send a notification every </div>
-                                <TimeInput
-                                    type="number"
-                                    value={getMinutesOnly(this.state.interval)}
-                                    onChange={event =>
-                                        this.updateNotificationInterval(
-                                            event.target.value
-                                        )
-                                    }
-                                />{' '}
-                                minutes.
-                            </Setting>
-                        </Fragment>
-                    )}
-                </Container>
-                <Extra>
-                    <SettingToggle
-                        onClick={() =>
-                            this.setState({
-                                showSettings: !this.state.showSettings
-                            })
-                        }
-                    >
-                        <CogIcon />
-                    </SettingToggle>
-                    {popup && (
-                        <Link to="/" target="_blank">
-                            Dashboard >
-                        </Link>
-                    )}
-                </Extra>
-            </Fragment>
+                    </Extra>
+                </div>
+            </Root>
         );
     }
 }
 
+const Root = styled.div`
+    display: flex;
+    justify-content: center;
+`;
+
 const Container = styled.div`
     margin-top: 10px;
-    width: 200px;
     background: #ebf1f2;
     padding: 20px;
+    width: 210px;
     border-radius: 10px;
     border: 1px solid #909fa5;
 `;
