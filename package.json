@@ -16,7 +16,7 @@
         "network-info": "echo \"ℹ ｢wds｣ Running on local network at http:/\" | tr \"\n\" \"/\"; ifconfig | grep \"inet \" | grep -Fv 127.0.0.1 | awk '{print $2}'"
     },
     "devDependencies": {
-        "@babel/core": "^7.9.0",
+        "@babel/core": "^7.12.10",
         "@babel/plugin-proposal-class-properties": "^7.5.5",
         "@babel/plugin-transform-runtime": "^7.9.0",
         "@babel/polyfill": "^7.8.7",
