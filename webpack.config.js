@@ -27,6 +27,14 @@ module.exports = {
             }
         ]
     },
+    resolve: {
+        extensions: ['.js', '.jsx'],
+        alias: {
+            components: path.resolve(__dirname, 'src/components'),
+            views: path.resolve(__dirname, 'src/views'),
+            lib: path.resolve(__dirname, 'src/lib')
+        }
+    },
     devServer: {
         overlay: true,
         writeToDisk: true,

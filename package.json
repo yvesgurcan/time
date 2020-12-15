@@ -1,16 +1,23 @@
 {
     "name": "timer",
+    "description": "Track when it's time to take a break.",
     "version": "1.1.0",
-    "description": "",
+    "license": "ISC",
+    "author": "Yves Gurcan",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yvesgurcan/time"
+    },
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server",
-        "build": "webpack-dev-server --no-live-reload"
+        "start": "npm run network-info; webpack-dev-server",
+        "build": "webpack --mode production",
+        "postversion": "npm run build && git add . && git commit -m 'New build' && git push",
+        "network-info": "echo \"ℹ ｢wds｣ Running on local network at http:/\" | tr \"\n\" \"/\"; ifconfig | grep \"inet \" | grep -Fv 127.0.0.1 | awk '{print $2}'"
     },
-    "author": "Yves Gurcan",
-    "license": "ISC",
     "devDependencies": {
         "@babel/core": "^7.9.0",
+        "@babel/plugin-proposal-class-properties": "^7.5.5",
         "@babel/plugin-transform-runtime": "^7.9.0",
         "@babel/polyfill": "^7.8.7",
         "@babel/preset-env": "^7.9.0",
@@ -23,12 +30,10 @@
         "react-router": "^5.0.1",
         "react-router-dom": "^5.0.1",
         "styled-components": "^5.1.0",
+        "uuid": "^3.3.2",
         "webpack": "^4.42.1",
         "webpack-cli": "^3.3.11",
         "webpack-dev-server": "^3.11.0"
     },
-    "dependencies": {
-        "@babel/plugin-proposal-class-properties": "^7.5.5",
-        "uuid": "^3.3.2"
-    }
+    "dependencies": {}
 }
