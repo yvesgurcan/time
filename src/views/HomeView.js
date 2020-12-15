@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
+
 import Chronometer from 'components/Chronometer';
 import { getReadableTime, getLocalStorage, deleteLocalStorage } from 'lib';
 
@@ -28,7 +30,7 @@ export default class HomeView extends Component {
 
         const historyWithTimes = history.map(timer => ({
             ...timer,
-            started: new Date(timer.started).toLocaleString(),
+            started: timer.started,
             humanFriendlyFormat: getReadableTime(timer.milliseconds)
         }));
 
@@ -46,12 +48,12 @@ export default class HomeView extends Component {
         return groupedTimes;
     };
 
-    deleTimer = async index => {
+    deleteTimer = async index => {
         const updatedHistory = await deleteLocalStorage(index, HISTORY_TIMERS);
 
         const historyWithTimes = updatedHistory.map(timer => ({
             ...timer,
-            started: new Date(timer.started).toLocaleString(),
+            started: timer.started,
             humanFriendlyFormat: getReadableTime(timer.milliseconds)
         }));
 
@@ -87,22 +89,23 @@ export default class HomeView extends Component {
         Object.keys(this.state.history).forEach((day, index) => {
             const timers = this.state.history[day];
             let dayComponent = [];
+            console.log(day);
             dayComponent.push(
                 <Heading2 key={day}>
-                    {new Date(day).toLocaleDateString()}
+                    {moment(day).format('DD/MM/YYYY')}
                 </Heading2>
             );
+
             timers.forEach(timer => {
                 dayComponent.push(
                     <Timer key={timer.id}>
                         <TimeDisplay>
                             <div>{timer.humanFriendlyFormat}</div>
                             <StartTime>
-                                at{' '}
-                                {new Date(timer.started).toLocaleTimeString()}
+                                at {moment(timer.started).format('HH:mm')}
                             </StartTime>
                         </TimeDisplay>
-                        <DeleteTimer onClick={() => this.deleTimer(index)}>
+                        <DeleteTimer onClick={() => this.deleteTimer(index)}>
                             <Button>Delete</Button>
                         </DeleteTimer>
                     </Timer>
