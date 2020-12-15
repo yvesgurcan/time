@@ -1,7 +1,7 @@
 {
     "name": "timer",
     "description": "Track when it's time to take a break.",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "license": "ISC",
     "author": "Yves Gurcan",
     "repository": {
