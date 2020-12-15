@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Chronometer from '../components/Chronometer';
-import { getReadableTime, getLocalStorage, deleteLocalStorage } from '../util';
+import Chronometer from 'components/Chronometer';
+import { getReadableTime, getLocalStorage, deleteLocalStorage } from 'lib';
 
 const HISTORY_TIMERS = 'history';
 

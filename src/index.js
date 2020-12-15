@@ -4,8 +4,8 @@ import { Switch } from 'react-router';
 import { HashRouter, Route } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
-import HomeView from './views/HomeView';
-import ChronometerView from './views/ChronometerView';
+import HomeView from 'views/HomeView';
+import ChronometerView from 'views/ChronometerView';
 
 const GlobalStyle = createGlobalStyle`
     body {

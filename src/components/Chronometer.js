@@ -14,7 +14,7 @@ import {
     getMinutes,
     getMinutesOnly,
     getPaddedTime
-} from '../util';
+} from 'lib';
 
 import CogIcon from './CogIcon';
 
