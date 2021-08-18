@@ -304,7 +304,7 @@ export default class Chronometer extends Component {
                             </Fragment>
                         )}
                     </Container>
-                    <Extra>
+                    {/*<Extra>
                         <SettingToggle
                             onClick={() =>
                                 this.setState({
@@ -319,7 +319,7 @@ export default class Chronometer extends Component {
                                 Dashboard >
                             </Link>
                         )}
-                    </Extra>
+                    </Extra>*/}
                 </div>
             </Root>
         );
