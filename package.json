@@ -15,7 +15,7 @@
         "postversion": "npm run build && git add . && git commit -m 'New build' && git push"
     },
     "devDependencies": {
-        "@babel/core": "^7.15.0",
+        "@babel/core": "^7.17.5",
         "@babel/plugin-proposal-class-properties": "^7.14.5",
         "@babel/plugin-transform-runtime": "^7.15.0",
         "@babel/polyfill": "^7.12.1",
